@@ -1,7 +1,7 @@
-import dbManager
+import dbManager, sqlCalls
 
 
 if __name__ == '__main__':
-    conn = dbManager.dbInit()
-
-    conn.close()
+    dbManager.dbInit()
+    sqlCalls.allByUser(38493)
+    sqlCalls.netMerchant(5200)

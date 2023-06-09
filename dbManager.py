@@ -2,6 +2,8 @@ import pandas as pd
 import sqlite3
 from sqlite3 import Error
 
+from constants import constants
+
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -28,21 +30,26 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
+        c.close()
     except Error as e:
         print(e)
 
+
 def generateDfPurchaseReturns():
-    transactions = pd.read_csv('combined_transactions.csv')
+    transactions = pd.read_csv(constants.get('combined_transactions.csv'))
 
     purchases = transactions.loc[transactions['transaction_type'] == 'PurchaseActivity']
     returns = transactions.loc[transactions['transaction_type'] == 'ReturnActivity']
 
     return purchases, returns
+
+
 def dbInit():
-    database = r"C:\Users\erikr\Documents\kasheesh\pythonsqlite.db"
+    database = constants.get("dbName")
 
     sql_create_purchases_table = """ CREATE TABLE IF NOT EXISTS purchases (
                                         user_id integer PRIMARY KEY,
+                                        transaction_type text,
                                         merchant_type_code int,
                                         amount_cents int,
                                         datetime text
@@ -50,6 +57,7 @@ def dbInit():
 
     sql_create_returns_table = """CREATE TABLE IF NOT EXISTS returns (
                                         user_id integer PRIMARY KEY,
+                                        transaction_type text,
                                         merchant_type_code int,
                                         amount_cents int,
                                         datetime text
@@ -72,5 +80,4 @@ def dbInit():
 
     purchases.to_sql('purchases', conn, if_exists='replace', index=False)
     returns.to_sql('returns', conn, if_exists='replace', index=False)
-
-    return conn
+    conn.close()
