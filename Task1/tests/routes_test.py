@@ -1,6 +1,6 @@
 import unittest
 from flask import Flask, jsonify
-from routes import allByUser_bp, netMerchant_bp
+from Task1.routes import allByUser_bp, netMerchant_bp
 
 
 class RoutesTestCase(unittest.TestCase):

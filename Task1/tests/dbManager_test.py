@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from dbManager import generateDfPurchaseReturns, create_connection, executeQuery
+from Task1.dbManager import generateDfPurchaseReturns, executeQuery
 import pandas as pd
 
 
