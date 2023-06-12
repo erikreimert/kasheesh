@@ -16,21 +16,36 @@ Tl;DR: I determined that the data was stationary with an ADF test, employment of
        which might be more valuable than raw purchases for staffing needs/budgeting. I set all return data as negative so that when I grouped by datetime and merchant code their sum would
        cancel out their purchase counterpoints. Everything else was exactly like the previous model.
 
-I would like to start off by saying that I had not worked with statistical analysis for a while so my skills were rusty and I had a steep learning curve. I would like to thank you for that
-because this proved to be a great learning experience. At first, I took a glance at the data to see what I was working with, I was interested to know what different columns and fields were inside
-those columns as to prune and prep the data accordingly. I decided to group purchases on a daily basis as to have a net purchase per merchant code to train the data and to exclude returns.
-Once I had this data, I selected the merchant code that was assigned to me and ran some tests to figure out if the data was stationary or not, this would inform the model I would select.
-I ran an augmented Dickey–Fuller test and got values that suggested the data was stationary (ADF Statistic: -7.798311117160032, p-value: 7.612023769124106e-12).
-I then plotted the data into scatter and line plots and visually inspected it (see figures 1 and 2, stationary test code in mainDeprecated.py under the stationaryTests function).
-At this point I decided that the data was stationary and that ARIMA would be the best model to proceed with.
-I then used auto arima to confirm this and find the best order to run my ARIMA model on. After I had a working model with 'mainV2' ("mainDeprecated" was a bust and I
-decided to start fresh) I decided to create a third model, except that this time I would include return data, I thought that in including return data I could get predictions on net daily earnings,
-which would prove valuable in tandem to raw daily purchases. I also initially only used the data corresponding to merchant_type_code = 5732 for training, but I found that using the rest of the data for
-training proved to give me best results (also oddly enough, excluding the final 13 items from 5732 when using returns yielded a lower MAE and excluding the final 16 items from 5732 when testing yielded a lower MAE.
-I chose to use MAE (Mean absolute error) as the data had some outlier days that would be punished to heavily by MSE, RMSE, etc…
-These are the results I got (see figures 3 and 4 for net daily purchases and net daily earnings correspondingly):
-net daily purchases MAE: 507.7127497987443
-net daily earnings MAE: 449.96884861153814
+I would like to start off by saying that I had not worked with statistical analysis for a while, so my skills were rusty, and I had a steep learning curve. I would like to thank you for
+providing me with this opportunity because it proved to be a great learning experience.
+
+To begin, I examined the data to understand its structure and the available columns. This allowed me to prepare and clean the data accordingly. I focused on grouping the purchases on a
+daily basis to calculate the net purchase per merchant code. I excluded the returns from the analysis.
+
+Once I obtained this daily purchase data, I selected the merchant code assigned to me and performed tests to determine if the data was stationary.
+Stationarity is an important characteristic for time series analysis.
+I conducted an augmented Dickey–Fuller test and obtained values suggesting that the data was indeed stationary (ADF Statistic: -7.798311117160032, p-value: 7.612023769124106e-12).
+Stationary test code in mainDeprecated.py under the stationaryTests function
+
+Next, I visually inspected the data by plotting scatter and line plots (see figures 1 and 2).
+Based on the visual inspection and stationary test results, I concluded that the ARIMA model would be suitable for further analysis.
+
+To confirm this, I used the auto_arima function which also identified the best order for the ARIMA model. Once I had a working model (implemented in 'mainV2'), I decided to incorporate return data as well.
+By including return data, I aimed to predict net daily earnings, which would provide a valuable insight alongside raw daily purchases.
+
+Initially, I only used the data corresponding to merchant_type_code = 5732 for training.
+However, through experimentation, I found that including the rest of the data for training yielded better results.
+Interestingly, excluding the final 13 items from merchant_type_code = 5732 when using returns resulted in a lower MAE, and excluding the final 16 items from merchant_type_code = 5732 during testing also yielded a lower MAE.
+
+I chose to use MAE (Mean Absolute Error) as the evaluation metric because the data contained some outlier days that would be heavily penalized by metrics like MSE or RMSE.
+
+Here are the results I obtained:
+
+Net Daily Purchases MAE: 507.7127497987443
+Net Daily Earnings MAE: 449.96884861153814
+
+These results provide an assessment of the model's accuracy in predicting the net daily purchases and earnings.
+Overall, the analysis provided valuable insights and highlighted the importance of incorporating return data for more comprehensive predictions.
 
 NOTE: In a professional environment, I would have discussed the creation of a net daily earnings with my team as to see if its value is worth the time implementing it, I would also have a doc with
       my assumptions and intentions as to wage which direction would be best for the project.
@@ -42,6 +57,8 @@ even an entirely different model).
 
 I tried implementing differentiation, but any attempt I had with it would fill my evaluations with NAN values which in turn broke MAE. It might be worth looking into this, specially given the
 outliers in the data that would be compensated by this.
+
+I could also combine the forecasts of several ARIMA models with different parameters (maybe even other forecasting methods) to attempt and crete a more robust model.
 
 ** File Description:
 - `combined_transactions.csv`: Input CSV file containing transaction data.
