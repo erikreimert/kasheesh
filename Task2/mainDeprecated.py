@@ -187,79 +187,16 @@ def arimaPrediction(df: pd.DataFrame, n_periods: int) -> pd.DataFrame:
 if __name__ == '__main__':
     df = pd.read_csv(r"combined_transactions.csv")
 
-    # Convert 'datetime' column to date if not already
-    if not isinstance(df['datetime'].dtype, pd.core.dtypes.dtypes.DatetimeTZDtype):
-        df['datetime'] = pd.to_datetime(df['datetime']).dt.date
-
-    # Rename the column from 'datetime' to 'date'
-    df = df.rename(columns={'datetime': 'date'})
-
-    # Convert the 'date' column to datetime
-    df['date'] = pd.to_datetime(df['date'])
-
-    # Filter data for merchant_type_code = 5737
-    df_filtered = df[df['merchant_type_code'] == 5732]
-
-    # Separate the purchases and returns into separate DataFrames
-    purchases = df_filtered[df_filtered['transaction_type'] == 'PurchaseActivity']
-    returns = df_filtered[df_filtered['transaction_type'] == 'ReturnActivity']
-
-    # Extract the date from purchases and returns
-    purchase_dates = purchases['date']
-    return_dates = returns['date']
-
-    # Drop the purchase rows where the items were returned based on amounts and transaction date
-    df_filtered = purchases[
-        ~((purchases['amount_cents'].isin(returns['amount_cents'])) & (purchase_dates.isin(return_dates)))]
-
-    # Change cents into dollars
-    df_filtered = df_filtered.copy()
-    df_filtered.loc[:, 'amount_dollars'] = df_filtered['amount_cents'] / 100
-
-    # Set the 'date' column as the index
-    df_filtered.reset_index(drop=True, inplace=True)
-    df.set_index('date', inplace=True)
-
-    # Split the data into training and testing sets
-    train_data, test_data = train_test_split(df_filtered, test_size=0.2, shuffle=False)
-
-    # Checking the best values for the order
-    stepFit = auto_arima(train_data['amount_dollars'], trace=True, suppress_warnings=True)
-    stepFit.summary()
-
-    # Fit the ARIMA model
-    model = ARIMA(train_data['amount_dollars'], order=(0, 0, 0))
-    model_fit = model.fit()
-
-    # Forecast the next 10 days
-    forecast = model_fit.forecast(steps=10)
-
-    # Print the forecasted amounts
-    print(forecast)
-
-    # Evaluate the model on the test set
-    test_predictions = model_fit.predict(start=len(train_data), end=len(train_data) + len(test_data) - 1)
-
-    # Create a DataFrame with actual and predicted amounts
-    evaluation = pd.DataFrame({'date': test_data.index, 'actual_amount': test_data['amount_dollars'],
-                               'predicted_amount': test_predictions})
-
-    # Print the evaluation results
-    print(evaluation)
-
-# --------------------------------------------------------------------------------------------------------------------
     # Extract the modified merchant data
-    # mod_data = genData(5732, data_csv)
-    # mod_data.to_csv('cac.csv', index=False)
+    testing_data = genData(5732, df)
 
     # Check if stationary
-    # stationaryTests(testing_data)
+    stationaryTests(testing_data)
 
     # Seems like its stationary so ARIME seems like a solid choice.
 
     # Perform ARIMA prediction
-    # print(mod_data.columns.tolist())
-    # arima_data = arimaPrediction(mod_data, 10)
+    #arima_data = arimaPrediction(testing_data, 10)
 
     # Print the predicted data
-    # arima_data.to_csv('results.csv', index=False)
+    #arima_data.to_csv('results.csv', index=False)

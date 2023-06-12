@@ -7,6 +7,17 @@ import warnings
 
 
 def cleanData(data: pd.DataFrame) -> [pd.DataFrame]:
+    """
+    Cleans the input data by converting 'datetime' column to date format,
+    subtracting returned items from the total count, converting amounts from cents to dollars,
+    grouping by 'datetime' and 'merchant_type_code', and splitting the data into training and testing sets.
+
+    Args:
+        data (pd.DataFrame): Input DataFrame containing transaction data.
+
+    Returns:
+        Tuple[pd.DataFrame, pd.DataFrame]: A tuple containing the testing set and training set.
+    """
     # Convert 'datetime' column to date if not already
     if not isinstance(df['datetime'].dtype, pd.core.dtypes.dtypes.DatetimeTZDtype):
         df['datetime'] = pd.to_datetime(df['datetime']).dt.date
@@ -32,7 +43,6 @@ def cleanData(data: pd.DataFrame) -> [pd.DataFrame]:
     # Get the training and testing sets
     test = daily_purchases[daily_purchases['merchant_type_code'] == 5732]
     train = daily_purchases[daily_purchases['merchant_type_code'] != 5732]
-    print(train[:10].shape)
     return test[-16:], train[:10]
 
 
@@ -41,8 +51,6 @@ if __name__ == '__main__':
     df = pd.read_csv("combined_transactions.csv")
 
     test_set, train_set = cleanData(df)
-
-    print(test_set.shape, train_set.shape)
 
     # merge them to fit them in the model (wishing I could upload two datasets instead of a concatenated one)
     model_set = pd.concat([train_set, test_set], axis=0)

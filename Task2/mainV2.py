@@ -7,6 +7,17 @@ import warnings
 
 
 def cleanData(data: pd.DataFrame) -> [pd.DataFrame]:
+    """
+    Cleans the input data by converting 'datetime' column to date format,
+    changing cents into dollars, grouping by 'datetime' and 'merchant_type_code',
+    and splitting the data into training and testing sets.
+
+    Args:
+        data (pd.DataFrame): Input DataFrame containing transaction data.
+
+    Returns:
+        Tuple[pd.DataFrame, pd.DataFrame]: A tuple containing the testing set and training set.
+    """
     # Convert 'datetime' column to date if not already
     if not isinstance(data['datetime'].dtype, pd.core.dtypes.dtypes.DatetimeTZDtype):
         data['datetime'] = pd.to_datetime(data['datetime']).dt.date

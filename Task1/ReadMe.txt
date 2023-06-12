@@ -32,11 +32,13 @@ If you have to install any of these they should be available through pip (pip in
 
     I recommend using Postman for this, it's easy to set up and use. By the way, make sure that the headers include
     Content-Type: application/json
-    Below is a sample payload for each endpoint correspondingly
+    Below is a sample payload for each endpoint correspondingly (errors will be thrown if you are missing the key field: user/merchant
+    and errors will be thrown if you try and append fields others than those. I did this to keep people from sending data that shouldn't be sent)
 
     {
     "user_id": 38493
     }
+
     {
     "merchant_type_code": 5200
     }
@@ -63,7 +65,11 @@ Flask v Django
     In the past I have chosen Django given how much more scalable and robust it can be. However, in the past Django
     has proven to be difficult and time-consuming at times. Given the short timeframe I had, and the very simple
     nature of the task Flask would more than cover my bases, thus I chose it (also I had never used flask before and this
-    was a golden learning opportunity). Also, Flask is RESTful which was something you guys were looking for, so thats
+    was a golden learning opportunity). Also, Flask is RESTful which was something you guys were looking for, so that's
     a plus. Also, developing the endpoints and API for it was a breeze, so I'm happy I chose it.
-    NOTE: The scalability of DJango makes it attractive for real projects, specially given the lack of security I found
-    flask to have (didn't require auth keys or anything to do my API calls on it).
+    NOTE: The scalability of Django makes it attractive for real projects, specially given the lack of security I found
+    flask to have (didn't require auth keys or anything to do my API calls on it, although I'm certain there are ways to
+    implement that manually).
+
+NOTE: I spoke to some friends about Django and Flask, and they mentioned that their companies were shifting from Flask to FASTapi (worth investigating). However, for this
+      particular scenario I would still go for Flask given its ease of implementation and the simplicity of the program.
